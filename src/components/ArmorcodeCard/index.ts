@@ -1,0 +1,1 @@
+export { ArmorcodeCardComponent } from './ArmorcodeCard';
