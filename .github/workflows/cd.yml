@@ -7,13 +7,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v3
-
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
+
+      - name: 'Get Previous tag'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+
+      - name: 'Get next minor version'
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@v1"
+        with:
+          version: ${{ steps.previoustag.outputs.tag }}
+
+      - name: 'Update package.json Version'
+        uses: reedyuk/npm-version@1.1.1
+        with:
+          version: ${{ steps.semvers.outputs.patch }}
+
       - run: yarn install
       - run: yarn tsc      
       - run: yarn build
