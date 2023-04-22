@@ -14,11 +14,9 @@ import { useApi } from '@backstage/core-plugin-api';
 import { Link } from '@backstage/core-components';
 
 import { Chip } from '@material-ui/core';
-import { useEntity } from '@backstage/plugin-catalog-react';
 
 import { armorcodeApiRef } from '../../api';
 import {
-  getProductAnnotation,
   ARMORCODE_PRODUCT_ANNOTATION,
   isArmorcodeAvailable
 } from '../../utils/commonUtil';
@@ -48,21 +46,22 @@ const useStyles = makeStyles(theme => ({
 }));
 
 type DenseTableProps = {
-  vulnList: any[];
+  productList: any[];
 };
 
-export const DenseTable = ({ vulnList }: DenseTableProps) => {
+export const DenseTable = ({ productList }: DenseTableProps) => {
   const classes = useStyles();
 
   const columns: TableColumn[] = [
-    { title: 'Component Name', field: 'componentName' },
-    { title: 'Component Version', field: 'componentVersionName' },
-    { title: 'Vulnerability Name', field: 'vulnerabilityName' },
-    { title: 'Severity', field: 'severity' },
+    { title: 'ID', field: 'id' },
+    { title: 'Product Name', field: 'name' },
+    { title: 'Component Version', field: 'versionNumber' },
+    { title: 'Description', field: 'description' },
+    { title: 'Team', field: 'team' },
     { title: 'Link', field: 'link' },
   ];
 
-  const data = vulnList.map(item => {
+  const data = productList.map(item => {
     let gateColor;
 
     switch (item.vulnerabilityWithRemediation.severity) {
@@ -89,17 +88,19 @@ export const DenseTable = ({ vulnList }: DenseTableProps) => {
     }
 
     return {
-      componentName: item.componentName,
-      componentVersionName: item.componentVersionName,
-      vulnerabilityName: item.vulnerabilityWithRemediation.vulnerabilityName,
-      severity: (
-        <Chip
-          label={item.vulnerabilityWithRemediation.severity}
-          classes={{ root: gateColor, label: classes.chipLabel }}
-        />
-      ),
+      id: item.id,
+      name: item.name,
+      versionNumber: item.versionNumber,
+      description: item.description,
+      team: item.team.name,
+      // severity: (
+      //   <Chip
+      //     label={item.vulnerabilityWithRemediation.severity}
+      //     classes={{ root: gateColor, label: classes.chipLabel }}
+      //   />
+      // ),
       link: (
-        <Link to={item.componentVersion}>
+        <Link to={item.id}>
           {' '}
           <LaunchSharp />{' '}
         </Link>
@@ -117,14 +118,10 @@ export const DenseTable = ({ vulnList }: DenseTableProps) => {
   );
 };
 
-type PageContentProps = {
-  productId: number;
-};
-
-export const PageContent = ({productId}: PageContentProps) => {
+export const PageContent = () => {
   const armorcodeApi = useApi(armorcodeApiRef);
   const { value, loading, error } = useAsync(async () => {
-    const data: any = await armorcodeApi.getCriticalProductFindings(productId);
+    const data: any = await armorcodeApi.getProducts();
     return data;
   }, []);
 
@@ -135,20 +132,15 @@ export const PageContent = ({productId}: PageContentProps) => {
       <EmptyState
         missing="info"
         title="No information to display"
-        description={`There is no Armorcode Product with id ${productId}!`}
+        description="There are no Armorcode Products!"
       />
     );
   } else if (error) {
     return <Alert severity="error">{error.message}</Alert>;
   }
-  return <DenseTable vulnList={value.items || []} />;
+  return <DenseTable productList={value || []} />;
 }
 
 export const ArmorcodePageComponent = () => {
-  const { entity } = useEntity();  
-  const { productId } = getProductAnnotation(entity);  
-  return isArmorcodeAvailable(entity) ? (
-    <PageContent 
-      productId={productId}
-    />) : <MissingAnnotationEmptyState annotation={ARMORCODE_PRODUCT_ANNOTATION} />;
+  return <PageContent />
 };

@@ -107,14 +107,13 @@ const getSecurityRiskCounts = (items: any) => {
 };
 
 type CardContentProps = {
-  projectName: string;
-  projectVersion: string
+  productId: number;
 };
 
-export const CardContent = ({projectName, projectVersion}: CardContentProps) => {
+export const CardContent = ({productId}: CardContentProps) => {
   const armorcodeApi = useApi(armorcodeApiRef);
   const { value, loading, error } = useAsync(async () => {
-    const data: any = await armorcodeApi.getVulnerabilities(projectName, projectVersion);
+    const data: any = await armorcodeApi.getCriticalProductFindings(productId);
     return data;
   }, []);
 
@@ -126,7 +125,7 @@ export const CardContent = ({projectName, projectVersion}: CardContentProps) => 
         <EmptyState
           missing="info"
           title="No information to display"
-          description={`There is no Armorcode Project ${projectName} with version ${projectVersion} available!`}
+          description={`There is no Armorcode Product with id ${productId}!`}
         />
       </InfoCard>
     );
@@ -167,10 +166,9 @@ export const CardContent = ({projectName, projectVersion}: CardContentProps) => 
 
 export const ArmorcodeCardComponent = () => {
   const { entity } = useEntity();    
-  const{ projectName, projectVersion } = getProductAnnotation(entity)
+  const{ productId } = getProductAnnotation(entity)
   return isArmorcodeAvailable(entity) ? (
     <CardContent 
-      projectName={projectName}
-      projectVersion={projectVersion}
+      productId={productId}
     />) : <MissingAnnotationEmptyState annotation={ARMORCODE_PRODUCT_ANNOTATION} />;
 };
