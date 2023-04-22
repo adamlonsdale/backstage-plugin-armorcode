@@ -21,7 +21,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import { getProjectAnnotation, ARMORCODE_PROJECT_ANNOTATION, isArmorcodeAvailable } from '../../utils/commonUtil';
+import { getProductAnnotation, ARMORCODE_PRODUCT_ANNOTATION, isArmorcodeAvailable } from '../../utils/commonUtil';
 
 ChartJS.register(
   CategoryScale,
@@ -167,10 +167,10 @@ export const CardContent = ({projectName, projectVersion}: CardContentProps) => 
 
 export const ArmorcodeCardComponent = () => {
   const { entity } = useEntity();    
-  const{ projectName, projectVersion } = getProjectAnnotation(entity)
+  const{ projectName, projectVersion } = getProductAnnotation(entity)
   return isArmorcodeAvailable(entity) ? (
     <CardContent 
       projectName={projectName}
       projectVersion={projectVersion}
-    />) : <MissingAnnotationEmptyState annotation={ARMORCODE_PROJECT_ANNOTATION} />;
+    />) : <MissingAnnotationEmptyState annotation={ARMORCODE_PRODUCT_ANNOTATION} />;
 };

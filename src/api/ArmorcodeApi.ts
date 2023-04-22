@@ -7,6 +7,6 @@ export const armorcodeApiRef = createApiRef<ArmorcodeApi>({
 
 /** @public */
 export interface ArmorcodeApi {
-  getVulnerabilities(projectName: string, projectVersion: string): Promise<any>;
-  getProjects(): Promise<any>;
+  getCriticalProductFindings(productId: number): Promise<any>;
+  getProducts(): Promise<any>;
 };

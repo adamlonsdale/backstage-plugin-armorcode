@@ -18,8 +18,8 @@ import { useEntity } from '@backstage/plugin-catalog-react';
 
 import { armorcodeApiRef } from '../../api';
 import {
-  getProjectAnnotation,
-  ARMORCODE_PROJECT_ANNOTATION,
+  getProductAnnotation,
+  ARMORCODE_PRODUCT_ANNOTATION,
   isArmorcodeAvailable
 } from '../../utils/commonUtil';
 
@@ -109,7 +109,7 @@ export const DenseTable = ({ vulnList }: DenseTableProps) => {
 
   return (
     <Table
-      title="Vulnerabilities"
+      title="Critical Findings"
       options={{ search: false, paging: false }}
       columns={columns}
       data={data}
@@ -118,14 +118,13 @@ export const DenseTable = ({ vulnList }: DenseTableProps) => {
 };
 
 type PageContentProps = {
-  projectName: string;
-  projectVersion: string
+  productId: number;
 };
 
-export const PageContent = ({projectName, projectVersion}: PageContentProps) => {
+export const PageContent = ({productId}: PageContentProps) => {
   const armorcodeApi = useApi(armorcodeApiRef);
   const { value, loading, error } = useAsync(async () => {
-    const data: any = await armorcodeApi.getVulnerabilities(projectName, projectVersion);
+    const data: any = await armorcodeApi.getCriticalProductFindings(productId);
     return data;
   }, []);
 
@@ -136,7 +135,7 @@ export const PageContent = ({projectName, projectVersion}: PageContentProps) => 
       <EmptyState
         missing="info"
         title="No information to display"
-        description={`There is no Armorcode Project ${projectName} with version ${projectVersion} available!`}
+        description={`There is no Armorcode Product with id ${productId}!`}
       />
     );
   } else if (error) {
@@ -147,10 +146,9 @@ export const PageContent = ({projectName, projectVersion}: PageContentProps) => 
 
 export const ArmorcodePageComponent = () => {
   const { entity } = useEntity();  
-  const { projectName, projectVersion } = getProjectAnnotation(entity);  
+  const { productId } = getProductAnnotation(entity);  
   return isArmorcodeAvailable(entity) ? (
     <PageContent 
-      projectName={projectName}
-      projectVersion={projectVersion}
-    />) : <MissingAnnotationEmptyState annotation={ARMORCODE_PROJECT_ANNOTATION} />;
+      productId={productId}
+    />) : <MissingAnnotationEmptyState annotation={ARMORCODE_PRODUCT_ANNOTATION} />;
 };

@@ -14,12 +14,11 @@ export class ArmorcodeClient implements ArmorcodeApi {
     this.identityApi = options.identityApi;
   }
 
-  public async getVulnerabilities(
-    projectName: string,
-    projectVersion: string
+  public async getCriticalProductFindings(
+    productId: number
   ): Promise<any> {
     const baseUrl = `${await this.discoveryApi.getBaseUrl("armorcode")}`;
-    const endpointUrl = `${baseUrl}/vulnerabilities/${projectName}/${projectVersion}`;
+    const endpointUrl = `${baseUrl}/products/${productId}/findings/critical`;
     const { token: idToken } = await this.identityApi.getCredentials();
     const response = await fetch(endpointUrl, {
       headers: {
@@ -35,9 +34,9 @@ export class ArmorcodeClient implements ArmorcodeApi {
     return response.json();
   }
 
-  public async getProjects(): Promise<any> {
+  public async getProducts(): Promise<any> {
     const baseUrl = `${await this.discoveryApi.getBaseUrl("armorcode")}`;
-    const endpointUrl = `${baseUrl}/projects`;
+    const endpointUrl = `${baseUrl}/products`;
     const { token: idToken } = await this.identityApi.getCredentials();
     const response = await fetch(endpointUrl, {
       headers: {

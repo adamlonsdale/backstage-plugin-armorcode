@@ -1,21 +1,19 @@
 import { Entity } from '@backstage/catalog-model';
 
-export const ARMORCODE_PROJECT_ANNOTATION = 'armorcode/project';
+export const ARMORCODE_PRODUCT_ANNOTATION = 'armorcode/product';
 
 export const isArmorcodeAvailable = (entity: Entity) =>
-  Boolean(entity.metadata.annotations?.[ARMORCODE_PROJECT_ANNOTATION]);
+  Boolean(entity.metadata.annotations?.[ARMORCODE_PRODUCT_ANNOTATION]);
 
-export const getProjectAnnotation = (
-  entity: Entity,
+export const getProductAnnotation = (
+  entity: Entity
 ): {
-  projectName: string;
-  projectVersion: string;
+  productId: number;
 } => {
-  let projectName = undefined;
-  let projectVersion = undefined;
-  const annotation: any = entity?.metadata.annotations?.[ARMORCODE_PROJECT_ANNOTATION];
+  let productId = undefined;
+  const annotation: any = entity?.metadata.annotations?.[ARMORCODE_PRODUCT_ANNOTATION];
   if (annotation) {
-    [projectName, projectVersion] = annotation.split('/');
+    [productId] = annotation.split('/');
   }
-  return { projectName, projectVersion };
+  return { productId };
 };
